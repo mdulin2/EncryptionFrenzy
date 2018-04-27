@@ -8,9 +8,13 @@ def sdesEncrypt(message, k):
     for char in message:
         charInt = ord(char)
         p = list(bin(charInt))[2:]
-        # alter p to always be 8 bits long
+        for i in range(len(p)):
+            if p[i] == '1':
+                p[i] = 1
+            elif p[i] == '0':
+                p[i] = 0
         if len(p) < 8:
             while len(p) < 8:
                 p.insert(0,0)
-        bitArrays.append(p)
+        bitArrays.append(sdes.encrypt(p,k))
     return bitArrays
