@@ -166,13 +166,21 @@ def Feistel_Enc(pt,key, subkey1, subkey2):
     final = permute_inverse(p12)
     return final
 
-
+"""
 k1 = [0,1,1,0,1,0,1,1]
 k2 = [1,0,1,0,1,0,1,0]
 pt = [0,1,0,1,0,1,0,1]
 key = [0,0,0,0,1,1,1,1]
+"""
+
+pt = [0,1,0,1,0,1,0,1]
+key = [0,0,0,0,0,1,1,1,1,1]
+
+k1 = [0,1,1,0,1,0,1,1]
+k2 = [1,0,1,0,1,0,1,0]
 
 print pt
 cipher = Feistel_Enc(pt,key,k1,k2)
+print cipher
 plain_txt = Feistel_Dec(cipher,key,k1,k2)
 print plain_txt
