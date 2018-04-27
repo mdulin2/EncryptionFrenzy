@@ -4,6 +4,7 @@ from sage.crypto.block_cipher.sdes import SimplifiedDES
 
 sdes = SimplifiedDES()
 
+# k = [0,0,0,0,0,1,1,1,1,1]
 def sdesEncrypt(message, k):
     bitArrays = []
     for char in message:
