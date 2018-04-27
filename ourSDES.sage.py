@@ -12,5 +12,5 @@ def sdesEncrypt(message, k):
         if len(p) < 8:
             while len(p) < 8:
                 p.insert(0,0)
-        bitArrays.insert(sdes.encrypt(p, k),-1)
+        bitArrays.append(p)
     return bitArrays
