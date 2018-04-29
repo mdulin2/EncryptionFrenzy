@@ -23,6 +23,7 @@ def sdesEncrypt(message, k):
         bitArrays.append(Feistel_Enc(p,k, subkey1, subkey2)) # replace w group function
 
         ciphertext = ""
+        #print bitArrays
         for bitArray in bitArrays:
             value = 0
             for i in range(8):
@@ -30,14 +31,17 @@ def sdesEncrypt(message, k):
                 if bitArray[i] == 1:
                     value += (2**(7 - i))
 
+            #print value
             ciphertext += chr(value)
             # print "Value: " + str(value)
+    #print type(ciphertext)
+    #print ciphertext[1]
     return ciphertext
 
 def sdesDecrypt(ciphertext, k):
+    intValues = parseForUniqueChars(ciphertext)
     bitArrays = []
-    for char in ciphertext:
-        charInt = ord(char)
+    for charInt in intValues:
         p = list(bin(charInt))[2:]
         for i in range(len(p)):
             if p[i] == '1':
@@ -50,15 +54,26 @@ def sdesDecrypt(ciphertext, k):
 
         subkey1, subkey2 = subkeys(k)
         bitArrays.append(Feistel_Dec(p,k,subkey1,subkey2))
+        #print "BitArrays:"
+        #print bitArrays
         message = ""
         for bitArray in bitArrays:
             value = 0
             for i in range(8):
-                if bitArray[i] == 0:
+                if bitArray[i] == 1:
                     value += (2**(7 - i))
-
+            #print value
             message += chr(value)
     return message
+
+def parseForUniqueChars(ciphertext):
+    intValues = []
+    i = 0
+    for i in range(len(ciphertext)):
+        #print ord(ciphertext[i])
+        intValues.append(ord(ciphertext[i]))
+    #print intValues
+    return intValues
 
 
 # Sammy
