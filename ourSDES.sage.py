@@ -2,9 +2,7 @@
 from sage.all_cmdline import *   # import sage library
 from sage.crypto.block_cipher.sdes import SimplifiedDES
 
-sdes = SimplifiedDES()
 
-# k = [0,0,0,0,0,1,1,1,1,1]
 def sdesEncrypt(message, k):
     bitArrays = []
     for char in message:
@@ -339,3 +337,11 @@ def Feistel_Enc(pt,key, subkey1, subkey2):
     p12 = p11 + p3
     final = permute_inverse(p12)
     return final
+
+
+sdes = SimplifiedDES()
+k = [0,0,0,0,0,1,1,1,1,1]
+output = sdesEncrypt("dog",k)
+print output
+message = sdesDecrypt(output,k)
+print message

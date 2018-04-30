@@ -32,40 +32,36 @@ def get_k(p):
         rand_val = randint(2,p-1)
         if(gcd(rand_val,p -1) == 1):
             return rand_val
-message = 126
-
+message = 100
+print message
 # Bobs information
 P = random_prime(10^10,10^20) # prime
+P = 467
 print("P: " + str(P))
-P = 859
-G = primitive_root(P)
-print("G: " + str(G))
-G = 2
+
+a = primitive_root(P)
+a = 2
+print("a: " + str(a))
+
 x = randint(2,(P) -2)
-x = 1000
-print("X: " + str(x))
-Y = mod(G^x,P)
+xA= 127
+print("xA: " + str(xA))
+Y = mod(a^xA,P)
 print("Y: " + str(Y))
 
 print("Private Key: ", x)
-print("Public Key: ",P,G,Y)
+print("Public Key: ",P,a,Y)
 
-k = get_k(P)
-r = mod(G ** k, P)
-s = mod(((message - x) / k),P-1)
+x = get_k(P)
+x = 213
+r = a ** x %  P
 
+x_inv = inverse_mod(x,P-1)
+inside = (message - xA*r) * x_inv
+s = mod(inside, P-1)
+print x_inv,s
 
-
-#Alice's turn to encrypt
-alice_rand = randint(0,2000) # if this is huge, it takes a while...
-print ("alice_rand: " + str(alice_rand))
-
-r2 = mod(G^ alice_rand, P)
-print("r2: " + str(r2))
-t = mod(((Y^alice_rand) * message), P)
-print("t: " + str(t))
-
-
-M = (t/(r2^x)) % P
-
-print("M: the final message... " + str(M))
+print a ** message % P
+print "verify: "
+c1 = (Y**r * r ** s) % P
+print c1
