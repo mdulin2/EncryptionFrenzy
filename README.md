@@ -13,6 +13,4 @@ Public Key:
 p = 467
 Y = 132
 a = 2
-r = 454
-s = 458
 xA = non of your business!
