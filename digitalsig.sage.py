@@ -68,23 +68,3 @@ print a ** message % P
 print "verify: "
 c1 = (Y**r * r ** s) % P
 print c1
-
-
-"""
-The actual scheme of this...
-#Alice's turn to encrypt
-alice_rand = randint(0,2000) # if this is huge, it takes a while...
-print ("alice_rand: " + str(alice_rand))
-
-r2 = mod(G^ alice_rand, P)
-print("r2: " + str(r2))
-t = mod(((Y^alice_rand) * message), P)
-print("t: " + str(t))
-
-
-M = (t/(r2^x)) % P
-
-print("M: the final message... " + str(M))
-"""
-#print get_k(P)
-# signature generation:

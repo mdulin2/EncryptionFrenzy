@@ -32,6 +32,7 @@ def get_k(p):
         rand_val = randint(2,p-1)
         if(gcd(rand_val,p -1) == 1):
             return rand_val
+            
 message = 100
 print message
 # Bobs information

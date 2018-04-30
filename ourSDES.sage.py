@@ -345,3 +345,79 @@ output = sdesEncrypt("dog",k)
 print output
 message = sdesDecrypt(output,k)
 print message
+
+
+def get_k(p):
+
+    while(True):
+        rand_val = randint(2,p-1)
+        if(gcd(rand_val,p -1) == 1):
+            return rand_val
+
+def key_gen():
+    p = raw_input("Enter a prime: ")
+    a = primitive_root(p)
+    r = mod(a,p)
+    alice_rand = raw_input("Enter a random value less than p")
+    a = r ^ alice_rand % p
+    print "Now send ", a , "to Bob!"
+    print """
+
+          """
+    bob_rand = raw_input("What value did Bob send you back? ")
+    print "The key is: ", a ^ bob_rand % p
+
+def encrypt():
+    k = raw_input("What is the 10 bit key?\n")
+    message = raw_input("What message do you want to encrypt?\n")
+    k = k.split(" ")
+    key = [int(x) for x in k]
+    output = sdesEncrypt("dog",key)
+    """
+    print output
+    message = sdesDecrypt(output,key)
+    print message
+    """
+def decrypt():
+    k = raw_input("What is the 10 bit key?\n")
+    message = raw_input("What message do you want to decrypt?\n")
+    k = k.split(" ")
+    key = [int(x) for x in k]
+    message = sdesDecrypt(message, key)
+    print "The decrypted message is ", message
+
+def signing():
+    message = 100
+    print message
+    # Bobs information
+    P = 467
+    print("P: " + str(P))
+
+    a = primitive_root(P)
+    a = 2
+    print("a: " + str(a))
+
+    x = randint(2,(P) -2)
+    xA= 127
+    print("xA: " + str(xA))
+    Y = mod(a^xA,P)
+    print("Y: " + str(Y))
+
+    print("Private Key: ", x)
+    print("Public Key: ",P,a,Y)
+
+    x = get_k(P)
+    x = 213
+    r = a ** x %  P
+
+    x_inv = inverse_mod(x,P-1)
+    inside = (message - xA*r) * x_inv
+    s = mod(inside, P-1)
+    print x_inv,s
+
+    print a ** message % P
+    print "verify: "
+    c1 = (Y**r * r ** s) % P
+    print c1
+
+signing()
