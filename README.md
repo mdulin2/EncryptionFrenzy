@@ -4,7 +4,7 @@
 Public Key: 
 p = 191
 g = 19
-Sammy, Trevor, Max: 133 
+Sammy, Trevor, Max: 152
 
 Use these numbers for the key exchange!
 
