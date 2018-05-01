@@ -3,66 +3,134 @@ from sage.all_cmdline import *   # import sage library
 from sage.crypto.block_cipher.sdes import SimplifiedDES
 
 
+# def sdesEncrypt(message, k):
+#     bitArrays = []
+#     for char in message:
+#         charInt = ord(char)
+#         p = list(bin(charInt))[2:]
+#         for i in range(len(p)):
+#             if p[i] == '1':
+#                 p[i] = 1
+#             elif p[i] == '0':
+#                 p[i] = 0
+#         if len(p) < 8:
+#             while len(p) < 8:
+#                 p.insert(0,0)
+#
+#         subkey1, subkey2 = subkeys(k)
+#         bitArrays.append(Feistel_Enc(p,k, subkey1, subkey2)) # replace w group function
+#
+#         ciphertext = ""
+#         #print bitArrays
+#         for bitArray in bitArrays:
+#             value = 0
+#             for i in range(8):
+#
+#                 if bitArray[i] == 1:
+#                     value += (2**(7 - i))
+#
+#             #print value
+#             ciphertext += chr(value)
+#             # print "Value: " + str(value)
+#     #print type(ciphertext)
+#     #print ciphertext[1]
+#     return ciphertext
+
 def sdesEncrypt(message, k):
-    bitArrays = []
-    for char in message:
-        charInt = ord(char)
-        p = list(bin(charInt))[2:]
-        for i in range(len(p)):
-            if p[i] == '1':
-                p[i] = 1
-            elif p[i] == '0':
-                p[i] = 0
-        if len(p) < 8:
-            while len(p) < 8:
-                p.insert(0,0)
-
-        subkey1, subkey2 = subkeys(k)
-        bitArrays.append(Feistel_Enc(p,k, subkey1, subkey2)) # replace w group function
-
-        ciphertext = ""
-        #print bitArrays
-        for bitArray in bitArrays:
-            value = 0
-            for i in range(8):
-
-                if bitArray[i] == 1:
-                    value += (2**(7 - i))
-
-            #print value
-            ciphertext += chr(value)
-            # print "Value: " + str(value)
-    #print type(ciphertext)
-    #print ciphertext[1]
-    return ciphertext
+    num = txt_to_num(message)
+    bitArray = []
+    bitstr = str(bin(num))
+    bitstr = bitstr[2:]
+    subkey1, subkey2 = subkeys(k)
+    cipherNum = 0
+    for i in range(0,len(bitstr),8):
+        b = bitstr[i:(i+8)]
+        if len(b) < 8:
+            while len(b) < 8:
+                b = "0" + b
+        p = []
+        for i in range(8):
+            if b[i] == '0':
+                p.append(0)
+            else:
+                p.append(1)
+        f = Feistel_Enc(p,k, subkey1, subkey2)
+        for bit in f:
+            bitArray.insert(0, bit)
+    exp = len(bitArray)
+    for i in range(exp):
+        cipherNum += (bitArray[i] * (2 ** (exp - i)))
+    return num_to_txt(int(cipherNum))
 
 def sdesDecrypt(ciphertext, k):
-    intValues = parseForUniqueChars(ciphertext)
+    num = txt_to_num(ciphertext)
     bitArrays = []
-    for charInt in intValues:
-        p = list(bin(charInt))[2:]
-        for i in range(len(p)):
-            if p[i] == '1':
-                p[i] = 1
-            elif p[i] == '0':
-                p[i] = 0
-        if len(p) < 8:
-            while len(p) < 8:
-                p.insert(0,0)
+    bitstr = str(bin(num))
+    bitstr = bitstr[2:]
+    subkey1, subkey2 = subkeys(k)
+    for i in range(0,len(bitstr),8):
+        b = bitstr[i:(i+8)]
+        p = []
+        for i in range(8):
+            if b[i] == '0':
+                p.append[0]
+            else:
+                p.append[1]
+        bitArrays.append(Feistel_Enc(p,k, subkey1, subkey2))
+    return bitArrays
 
-        subkey1, subkey2 = subkeys(k)
-        bitArrays.append(Feistel_Dec(p,k,subkey1,subkey2))
-        #print "BitArrays:"
-        #print bitArrays
-        message = ""
-        for bitArray in bitArrays:
-            value = 0
-            for i in range(8):
-                if bitArray[i] == 1:
-                    value += (2**(7 - i))
-            #print value
-            message += chr(value)
-    return message
+
+#msg_in is a string. Credit: Dr. Paul De Palma
+def txt_to_num(msg_in):
+    #transforms string to the indices of each letter in the 8-bit ASCII table
+    msg_idx = map(ord,msg_in)
+    #computes the base 256 integer formed from the indices transformed to decimal.
+    #each digit in the list is multiplied by the respective power of 256 from
+    #right to left.  For example, [64,64] = 256^1 * 64 + 256^0 * 64
+    num = ZZ(msg_idx,256)
+    return num
+
+#Converts a digit sequence to a string
+#Return the string
+#num_in is a decimal integer composed as described above
+# Credit: Dr. Paul De Palma
+def num_to_txt(num_in):
+    #returns the list described above
+    msg_idx = num_in.digits(256)
+    #maps each index to its associated character in the ascii table
+    m = map(chr,msg_idx)
+    #transforms the list to a string
+    m = ''.join(m)
+    return m
+
+
+# def sdesDecrypt(ciphertext, k):
+#     intValues = parseForUniqueChars(ciphertext)
+#     bitArrays = []
+#     for charInt in intValues:
+#         p = list(bin(charInt))[2:]
+#         for i in range(len(p)):
+#             if p[i] == '1':
+#                 p[i] = 1
+#             elif p[i] == '0':
+#                 p[i] = 0
+#         if len(p) < 8:
+#             while len(p) < 8:
+#                 p.insert(0,0)
+#
+#         subkey1, subkey2 = subkeys(k)
+#         bitArrays.append(Feistel_Dec(p,k,subkey1,subkey2))
+#         #print "BitArrays:"
+#         #print bitArrays
+#         message = ""
+#         for bitArray in bitArrays:
+#             value = 0
+#             for i in range(8):
+#                 if bitArray[i] == 1:
+#                     value += (2**(7 - i))
+#             #print value
+#             message += chr(value)
+#     return message
 
 def parseForUniqueChars(ciphertext):
     intValues = []
@@ -339,12 +407,12 @@ def Feistel_Enc(pt,key, subkey1, subkey2):
     return final
 
 
-sdes = SimplifiedDES()
-k = [0,0,0,0,0,1,1,1,1,1]
-output = sdesEncrypt("dog",k)
-print output
-message = sdesDecrypt(output,k)
-print message
+# sdes = SimplifiedDES()
+# k = [0,0,0,0,0,1,1,1,1,1]
+# output = sdesEncrypt("dog",k)
+# print output
+# message = sdesDecrypt(output,k)
+# print message
 
 
 def get_k(p):
@@ -420,4 +488,4 @@ def signing():
     c1 = (Y**r * r ** s) % P
     print c1
 
-signing()
+# signing()
