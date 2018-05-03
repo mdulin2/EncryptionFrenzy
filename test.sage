@@ -1,8 +1,4 @@
 #-*-coding: utf-8-*-
-from sage.all_cmdline import *   # import sage library
-from sage.crypto.block_cipher.sdes import SimplifiedDES
-
-
 # def sdesEncrypt(message, k):
 #     bitArrays = []
 #     for char in message:
@@ -60,8 +56,6 @@ def sdesEncrypt(message, k):
     exp = len(bitArray)
     for i in range(exp):
         cipherNum += (bitArray[i] * (2 ** (exp - i)))
-    print cipherNum
-    print num_to_txt(25894044)
     return num_to_txt(int(cipherNum))
 
 def sdesDecrypt(ciphertext, k):
@@ -99,6 +93,7 @@ def txt_to_num(msg_in):
 def num_to_txt(num_in):
     #returns the list described above
     msg_idx = num_in.digits(256)
+    print msg_idx
     #maps each index to its associated character in the ascii table
     m = map(chr,msg_idx)
     #transforms the list to a string
@@ -455,4 +450,39 @@ def decrypt():
     key = [int(x) for x in k]
     message = sdesDecrypt(message, key)
     print "The decrypted message is ", message
-    
+
+def signing():
+    message = 100
+    print message
+    # Bobs information
+    P = 467
+    print("P: " + str(P))
+
+    a = primitive_root(P)
+    a = 2
+    print("a: " + str(a))
+
+    x = randint(2,(P) -2)
+    xA= 127
+    print("xA: " + str(xA))
+    Y = mod(a^xA,P)
+    print("Y: " + str(Y))
+
+    print("Private Key: ", x)
+    print("Public Key: ",P,a,Y)
+
+    x = get_k(P)
+    x = 213
+    r = a ** x %  P
+
+    x_inv = inverse_mod(x,P-1)
+    inside = (message - xA*r) * x_inv
+    s = mod(inside, P-1)
+    print x_inv,s
+
+    print a ** message % P
+    print "verify: "
+    c1 = (Y**r * r ** s) % P
+    print c1
+
+# signing()
