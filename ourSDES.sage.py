@@ -434,52 +434,14 @@ def encrypt():
     message = raw_input("What message do you want to encrypt?\n")
     k = k.split(" ")
     key = [int(x) for x in k]
-    output = sdesEncrypt("dog",key)
-    """
+    output = ourEncrypt("dog",key)
     print output
-    message = sdesDecrypt(output,key)
-    print message
-    """
-def decrypt():
+    return output
+
+def decrypt(message):
     k = raw_input("What is the 10 bit key?\n")
-    message = raw_input("What message do you want to decrypt?\n")
     k = k.split(" ")
     key = [int(x) for x in k]
-    message = sdesDecrypt(message, key)
+    message = ourDecrypt(message, key)
     print "The decrypted message is ", message
-
-def signing():
-    message = 100
-    print message
-    # Bobs information
-    P = 467
-    print("P: " + str(P))
-
-    a = primitive_root(P)
-    a = 2
-    print("a: " + str(a))
-
-    x = randint(2,(P) -2)
-    xA= 127
-    print("xA: " + str(xA))
-    Y = mod(a^xA,P)
-    print("Y: " + str(Y))
-
-    print("Private Key: ", x)
-    print("Public Key: ",P,a,Y)
-
-    x = get_k(P)
-    x = 213
-    r = a ** x %  P
-
-    x_inv = inverse_mod(x,P-1)
-    inside = (message - xA*r) * x_inv
-    s = mod(inside, P-1)
-    print x_inv,s
-
-    print a ** message % P
-    print "verify: "
-    c1 = (Y**r * r ** s) % P
-    print c1
-
-# signing()
+    return message
