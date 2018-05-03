@@ -419,30 +419,27 @@ def get_k(p):
         if(gcd(rand_val,p -1) == 1):
             return rand_val
 
+# returns the prime, primative root, alice's random number(key) and the Y to send
 def key_gen():
-    p = raw_input("Enter a prime: ")
+    num = 4
+    while(num not in Primes()):
+        num = randint(2,(2**8)-1)
+    p = num
     a = primitive_root(p)
     r = mod(a,p)
-    alice_rand = raw_input("Enter a random value less than p")
-    a = r ^ alice_rand % p
-    print "Now send ", a , "to Bob!"
-    print """
-
-          """
-    bob_rand = raw_input("What value did Bob send you back? ")
-    print "The key is: ", a ^ bob_rand % p
+    alice_rand = randint(0,p-1)
+    Y = r ^ alice_rand % p
+    return p,r,Y,alice_rand
 
 def encrypt():
     k = raw_input("What is the 10 bit key?\n")
     message = raw_input("What message do you want to encrypt?\n")
     k = k.split(" ")
     key = [int(x) for x in k]
-    output = sdesEncrypt("dog",key)
-    """
-    print output
-    message = sdesDecrypt(output,key)
-    print message
-    """
+    output = sdesEncrypt(message,key)
+    print "encrypted output!",output
+    return output
+
 def decrypt():
     k = raw_input("What is the 10 bit key?\n")
     message = raw_input("What message do you want to decrypt?\n")
@@ -450,39 +447,28 @@ def decrypt():
     key = [int(x) for x in k]
     message = sdesDecrypt(message, key)
     print "The decrypted message is ", message
+    return message
 
-def signing():
-    message = 100
-    print message
-    # Bobs information
-    P = 467
-    print("P: " + str(P))
+# the prime, alice random number, then the value from bob to be sent back
+# the diffie hellman algorithm.
+# Both public
+def diffie(p,g,alice_rand,bob_rand):
 
-    a = primitive_root(P)
-    a = 2
-    print("a: " + str(a))
+    #p =random_prime(2,(2**10)-1) # prime number
+    #p = 191
+    print "p,g",p,g
+    s = primitive_root(p)
+    r = mod(s,p) # primative root
+    r = g
+    #private values for alice and bob
+    #alice_rand = randint(1,p)
+    #alice_rand = 133
+    print "alice:",alice_rand
 
-    x = randint(2,(P) -2)
-    xA= 127
-    print("xA: " + str(xA))
-    Y = mod(a^xA,P)
-    print("Y: " + str(Y))
+    #numbers that we transfer, public
+    print "bob",bob_rand
+    a = r ** alice_rand % p
 
-    print("Private Key: ", x)
-    print("Public Key: ",P,a,Y)
+    return bob_rand ** alice_rand % p
 
-    x = get_k(P)
-    x = 213
-    r = a ** x %  P
-
-    x_inv = inverse_mod(x,P-1)
-    inside = (message - xA*r) * x_inv
-    s = mod(inside, P-1)
-    print x_inv,s
-
-    print a ** message % P
-    print "verify: "
-    c1 = (Y**r * r ** s) % P
-    print c1
-
-# signing()
+print key_gen()

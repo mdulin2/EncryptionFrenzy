@@ -1,24 +1,23 @@
 
 # the diffie hellman algorithm.
 # Both public
-p =random_prime(2,(2**10)-1) # prime number
-p = 191
-print ":",p
-s = primitive_root(p)
-print 'S',s
-r = mod(s,p) # primative root
-print 'r',r
-#private values for alice and bob
-alice_rand = randint(1,p)
-alice_rand = 133
-print "alice:",alice_rand
-bob_rand = randint(1,p)
+def diffie(p,g,alice_rand,bob_rand):
 
-#numbers that we transfer, public
-a = r ^ alice_rand % p
-b = r ^ bob_rand % p
+    #p =random_prime(2,(2**10)-1) # prime number
+    #p = 191
+    print "p,g",p,g
+    s = primitive_root(p)
+    r = mod(s,p) # primative root
+    r = g
+    #private values for alice and bob
+    #alice_rand = randint(1,p)
+    #alice_rand = 133
+    print "alice:",alice_rand
 
-print a, b
-# gets the same value for bob and alice as the key
-print a ^ bob_rand % p
-print b ^ alice_rand % p
+    #numbers that we transfer, public
+    print "bob",bob_rand
+    a = r ** alice_rand % p
+
+    return bob_rand ** alice_rand % p
+
+print diffie(23,5,3,4)

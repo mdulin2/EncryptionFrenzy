@@ -9,6 +9,7 @@ def get_k(p):
             return rand_val
 
 def signing():
+    message = raw_input(("Please enter a message: "))
     message = _sage_const_100 
     print message
     # Bobs information
@@ -38,6 +39,7 @@ def signing():
     inside = (message - xA*r) * x_inv
     s = mod(int(inside), int(P)-_sage_const_1 )
     print 's: ', s
+
 def verify():
 
     a = int(raw_input("What is a?\n"))
@@ -52,8 +54,10 @@ def verify():
     s2 = (Y**r * r ** s) % P
     print 'S2:',s2
     if(s1==s2):
+        print s1,"=",s2
         print "Verified!"
     else:
         print "Intruder!"
+
 #signing()
 verify()
