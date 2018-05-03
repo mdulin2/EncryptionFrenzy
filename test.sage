@@ -1,77 +1,79 @@
 #-*-coding: utf-8-*-
-from sage.all_cmdline import *   # import sage library
-from sage.crypto.block_cipher.sdes import SimplifiedDES
-import random
+# def sdesEncrypt(message, k):
+#     bitArrays = []
+#     for char in message:
+#         charInt = ord(char)
+#         p = list(bin(charInt))[2:]
+#         for i in range(len(p)):
+#             if p[i] == '1':
+#                 p[i] = 1
+#             elif p[i] == '0':
+#                 p[i] = 0
+#         if len(p) < 8:
+#             while len(p) < 8:
+#                 p.insert(0,0)
+#
+#         subkey1, subkey2 = subkeys(k)
+#         bitArrays.append(Feistel_Enc(p,k, subkey1, subkey2)) # replace w group function
+#
+#         ciphertext = ""
+#         #print bitArrays
+#         for bitArray in bitArrays:
+#             value = 0
+#             for i in range(8):
+#
+#                 if bitArray[i] == 1:
+#                     value += (2**(7 - i))
+#
+#             #print value
+#             ciphertext += chr(value)
+#             # print "Value: " + str(value)
+#     #print type(ciphertext)
+#     #print ciphertext[1]
+#     return ciphertext
 
-def ourEncrypt(message, k):
+def sdesEncrypt(message, k):
+    num = txt_to_num(message)
+    bitArray = []
+    bitstr = str(bin(num))
+    bitstr = bitstr[2:]
     subkey1, subkey2 = subkeys(k)
-    cipherblocks = []
-    cipherblocks.append(bin_to_list(bin(random.randint(0,128))))
-    for i in range(len(message)):
-        p = xorBinList(cipherblocks[i], bin_to_list(bin(ord(message[i]))))
-        c1 = Feistel_Enc(p, k, subkey1, subkey2)
-        cipherblocks.append(c1)
-    return cipherblocks
+    cipherNum = 0
+    for i in range(0,len(bitstr),8):
+        b = bitstr[i:(i+8)]
+        if len(b) < 8:
+            while len(b) < 8:
+                b = "0" + b
+        p = []
+        for i in range(8):
+            if b[i] == '0':
+                p.append(0)
+            else:
+                p.append(1)
+        f = Feistel_Enc(p,k, subkey1, subkey2)
+        for bit in f:
+            bitArray.insert(0, bit)
+    exp = len(bitArray)
+    for i in range(exp):
+        cipherNum += (bitArray[i] * (2 ** (exp - i)))
+    return num_to_txt(int(cipherNum))
 
-def ourDecrypt(cipherblocks, k):
+def sdesDecrypt(ciphertext, k):
+    num = txt_to_num(ciphertext)
+    bitArrays = []
+    bitstr = str(bin(num))
+    bitstr = bitstr[2:]
     subkey1, subkey2 = subkeys(k)
-    mblocks = []
-    mblocks.append(bin_to_list(bin(random.randint(0,128))))
-    for i in range(len(cipherblocks)-1):
-        c1 = Feistel_Dec(cipherblocks[i+1],k,subkey1,subkey2)
-        c1 = xorBinList(c1,cipherblocks[i])
-        mblocks.append(c1)
-    return mblocks
-
-def getMessage(mblocks):
-    message = ""
-    for i in mblocks:
-        message += chr(list_to_int(i))
-    message = message[1:]
-    return message
-
-def list_to_int(binlist):
-    value = 0
-    for i in range(len(binlist)):
-        if binlist[i] == 1:
-            value += (2**(len(binlist)-(1 + i)))
-    return value
-
-def char_to_array(char):
-    num = list(bin(ord(char)))[2:]
-    for i in range(len(num)):
-        if num[i] == '0':
-            num[i] = 0
-        else:
-            num[i] = 1
-    return num
-
-def bin_to_list(binvalue):
-    thelist = list(binvalue)[2:]
-    for i in range(len(thelist)):
-        if thelist[i] == '0':
-            thelist[i] = 0
-        else:
-            thelist[i] = 1
-    return thelist
-
-def xorBinList(list1, list2):
-    if len(list1) < 8:
-        list1 = bufferZeros(list1, 8)
-    if len(list2) < 8:
-        list2 = bufferZeros(list2, 8)
-    final = []
-    for i in range(8):
-        if list1[i] == list2[i]:
-            final.append(0)
-        else:
-            final.append(1)
-    return final
-
-def bufferZeros(thelist, length):
-    while len(thelist) < length:
-        thelist.insert(0,0)
-    return thelist
+    for i in range(0,len(bitstr),8):
+        b = bitstr[i:(i+8)]
+        p = []
+        for i in range(8):
+            if b[i] == '0':
+                p.append[0]
+            else:
+                p.append[1]
+        bitArrays.append(Feistel_Enc(p,k, subkey1, subkey2))
+    return bitArrays
 
 
 #msg_in is a string. Credit: Dr. Paul De Palma
@@ -91,6 +93,7 @@ def txt_to_num(msg_in):
 def num_to_txt(num_in):
     #returns the list described above
     msg_idx = num_in.digits(256)
+    print msg_idx
     #maps each index to its associated character in the ascii table
     m = map(chr,msg_idx)
     #transforms the list to a string
